@@ -7,7 +7,6 @@ from typing import Iterable, Optional
 
 import requests
 from singer_sdk import exceptions
-from singer_sdk import typing as th  # JSON Schema typing helpers
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 
 from tap_gladly.client import gladlyStream
@@ -24,44 +23,7 @@ class ExportJobsStream(gladlyStream):
     primary_keys = ["id"]
     replication_key = None
     # Optionally, you may also use `schema_filepath` in place of `schema`:
-    # schema_filepath = SCHEMAS_DIR / "users.json"
-    schema = th.PropertiesList(
-        th.Property("name", th.StringType),
-        th.Property("id", th.StringType, description="Unique Job ID"),
-        th.Property(
-            "scheduleId", th.StringType, description="Schedule id the job belongs to"
-        ),
-        th.Property(
-            "status",
-            th.StringType,
-            description='Current job status: "PENDING" "IN_PROGRESS" "COMPLETED"'
-            ' "FAILED"',
-        ),
-        th.Property(
-            "updatedAt",
-            th.StringType,
-        ),
-        th.Property(
-            "parameters",
-            th.ObjectType(
-                th.Property(
-                    "type", th.StringType, description="Schedule id the job belongs to"
-                ),
-                th.Property(
-                    "startAt",
-                    th.StringType,
-                    description="Start time for the export query",
-                ),
-                th.Property(
-                    "endAt", th.StringType, description="End time for the export query"
-                ),
-            ),
-        ),
-        th.Property(
-            "files",
-            th.ArrayType(th.StringType),
-        ),
-    ).to_dict()
+    schema_filepath = SCHEMAS_DIR / "export_jobs.json"
 
     # start_date
     def post_process(self, row, context):
@@ -83,7 +45,7 @@ class ExportJobsStream(gladlyStream):
 class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
     """Abstract class, export conversation items stream."""
 
-    name = "file_conversation_items"
+    name = "conversation_conversation_items"
     path = "/export/jobs/{job_id}/files/conversation_items.jsonl"
     primary_keys = ["id"]
     replication_key = None
@@ -98,7 +60,7 @@ class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
             "conversation_note": "export_conversation-conversation_note.json",
             "topic_change": "export_conversation-topic_change.json",
             "sms": "export_conversation-topic_change.json",
-            "status_change": "export_conversation-conversation_status_change.json",
+            "conversation_status_change": "export_conversation-conversation_status_change.json",  # noqa
             "phone_call": "export_conversation-phone_call.json",
             "voicemail": "export_conversation-voicemail.json",
         }
@@ -125,47 +87,52 @@ class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
 class ExportFileConversationItemsChatMessage(ExportFileConversationItemsStream):
     """Export conversation items stream where content type is chat_message."""
 
-    name = "file_chat_message"
+    name = "conversation_chat_message"
     content_type = "chat_message"
 
 
 class ExportFileConversationItemsConversationNote(ExportFileConversationItemsStream):
     """Export conversation items stream where content type is conversation_note."""
 
-    name = "file_conversation_note"
+    name = "conversation_conversation_note"
     content_type = "conversation_note"
 
 
 class ExportFileConversationItemsTopicChange(ExportFileConversationItemsStream):
     """Export conversation items stream where content type is topic_change."""
 
-    name = "file_topic_change"
+    name = "conversation_topic_change"
     content_type = "topic_change"
 
 
 class ExportFileConversationItemsSms(ExportFileConversationItemsStream):
     """Export conversation items stream where content type is sms."""
 
-    name = "file_sms"
+    name = "conversation_sms"
     content_type = "sms"
 
 
-class ExportFileConversationItemsStatusChange(ExportFileConversationItemsStream):
-    """Export conversation items stream where content type is status_change."""
+class ExportFileConversationItemsConversationStatusChange(
+    ExportFileConversationItemsStream
+):
+    """Export conversation items stream.
 
-    name = "file_status_change"
-    content_type = "status_change"
+    Where content type is conversation_status_change.
+    """
+
+    name = "conversation_conversation_status_change"
+    content_type = "conversation_status_change"
 
 
 class ExportFileConversationItemsPhoneCall(ExportFileConversationItemsStream):
     """Export conversation items stream where content type is phone_call."""
 
-    name = "file_phone_call"
+    name = "conversation_phone_call"
     content_type = "phone_call"
 
 
 class ExportFileConversationItemsVoiceMail(ExportFileConversationItemsStream):
     """Export conversation items stream where content type is voicemail."""
 
-    name = "file_voicemail"
+    name = "conversation_voicemail"
     content_type = "voicemail"
