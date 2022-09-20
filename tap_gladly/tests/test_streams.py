@@ -3,10 +3,7 @@
 import datetime
 
 from tap_gladly.client import gladlyStream
-from tap_gladly.streams import (
-    ExportFileConversationItemsChatMessage,
-    ExportJobsStream,
-)
+from tap_gladly.streams import ExportFileConversationItemsChatMessage, ExportJobsStream
 from tap_gladly.tap import Tapgladly
 
 SAMPLE_CONFIG = {
