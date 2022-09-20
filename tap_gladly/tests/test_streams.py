@@ -12,7 +12,7 @@ SAMPLE_CONFIG = {
     ),
     "username": "test",
     "password": "test",
-    "api_base_url": "api_base_url",
+    "api_url_base": "api_base_url",
 }
 
 

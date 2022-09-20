@@ -58,11 +58,13 @@ class Tapgladly(Tap):
         th.Property(
             "start_date",
             th.DateTimeType,
-            description="The earliest record date to sync",
+            required=True,
+            description="The earliest record date to sync, format %Y-%m-%dT%H:%M:%SZ",
         ),
         th.Property(
             "api_url_base",
             th.StringType,
+            required=True,
             description="The url for the API service",
         ),
     ).to_dict()
