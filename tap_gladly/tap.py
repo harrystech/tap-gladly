@@ -15,7 +15,6 @@ from tap_gladly.streams import (
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
     ExportJobsStream,
-    ExportFileConversationItemsStream,
     ExportFileConversationItemsStreamChatMessage,
     ExportFileConversationItemsStreamTopicChange,
 ]
@@ -24,6 +23,7 @@ STREAM_TYPES = [
 class Tapgladly(Tap):
     """gladly tap class."""
     name = "tap-gladly"
+
 
     # TODO: Update this section with the actual config values you expect:
     config_jsonschema = th.PropertiesList(

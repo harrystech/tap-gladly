@@ -1,5 +1,7 @@
 """Stream type classes for tap-gladly."""
+from datetime import datetime
 
+import abc
 import requests
 import json
 from pathlib import Path
@@ -73,6 +75,16 @@ class ExportJobsStream(gladlyStream):
 
     ).to_dict()
 
+    # start_date
+    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+        """As needed, append or transform raw data to match expected structure."""
+        """As needed, append or transform raw data to match expected structure."""
+        if 'start_date' not in self.config:
+            return row
+        if datetime.strptime(row['parameters']['startAt'], self._common_date_format) > datetime.strptime(
+                self.config['start_date'], self._common_date_format):
+            return row
+
     def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
         """Return a context dictionary for child streams."""
         return {
@@ -80,15 +92,16 @@ class ExportJobsStream(gladlyStream):
         }
 
 
-class ExportFileConversationItemsStream(gladlyStream):
+class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
     """Define custom stream."""
-    name = "file"
+    name = "file_conversation_items"
     # path = "/export/jobs/OnulpHHKS5abbm3gRKHYXg/files/conversation_items.jsonl"  # For testing
     path = "/export/jobs/{job_id}/files/conversation_items.jsonl"
     primary_keys = ["id"]
     replication_key = None
     parent_stream_type = ExportJobsStream
     ignore_parent_replication_key = True
+
     # Optionally, you may also use `schema_filepath` in place of `schema`:
     @property
     def schema_filepath(self):
@@ -103,7 +116,7 @@ class ExportFileConversationItemsStream(gladlyStream):
         }
 
         try:
-            return SCHEMAS_DIR / schemas_mapping[self.config['content_type'].lower()]
+            return SCHEMAS_DIR / schemas_mapping[self.content_type.lower()]
         except KeyError:
             raise exceptions.ConfigValidationError(
                 "content_type config parameter is required for export conversations streams")
@@ -116,13 +129,15 @@ class ExportFileConversationItemsStream(gladlyStream):
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
         """As needed, append or transform raw data to match expected structure."""
 
-        if row['content']['type'].lower() == self.config.get('content_type').lower():
+        if row['content']['type'].lower() == self.content_type.lower():
             return row
 
 
 class ExportFileConversationItemsStreamChatMessage(ExportFileConversationItemsStream):
+    name = 'file_chat_message'
     content_type = 'chat_message'
 
 
 class ExportFileConversationItemsStreamTopicChange(ExportFileConversationItemsStream):
+    name = 'file_topic_change'
     content_type = 'topic_change'
