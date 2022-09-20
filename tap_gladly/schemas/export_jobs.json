@@ -36,12 +36,5 @@
         "type": "string"
       }
     }
-  },
-  "required": [
-    "files",
-    "id",
-    "parameters",
-    "status",
-    "updatedAt"
-  ]
+  }
 }

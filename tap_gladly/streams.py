@@ -28,7 +28,6 @@ class ExportJobsStream(gladlyStream):
     # start_date
     def post_process(self, row, context):
         """As needed, append or transform raw data to match expected structure."""
-        """As needed, append or transform raw data to match expected structure."""
         if "start_date" not in self.config:
             return row
         if datetime.strptime(

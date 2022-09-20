@@ -40,7 +40,6 @@
         }
       },
       "required": [
-        "completedAt",
         "from",
         "startedAt",
         "to",
@@ -59,11 +58,7 @@
         "id": {
           "type": "string"
         }
-      },
-      "required": [
-        "id",
-        "type"
-      ]
+      }
     },
     "responder": {
       "type": "object",
@@ -74,11 +69,7 @@
         "id": {
           "type": "string"
         }
-      },
-      "required": [
-        "id",
-        "type"
-      ]
+      }
     },
     "timestamp": {
       "type": "string"
@@ -86,10 +77,8 @@
   },
   "required": [
     "content",
-    "conversationId",
     "customerId",
     "id",
-    "initiator",
     "timestamp"
   ]
 }

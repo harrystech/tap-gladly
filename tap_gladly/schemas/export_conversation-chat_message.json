@@ -55,10 +55,8 @@
   },
   "required": [
     "content",
-    "conversationId",
     "customerId",
     "id",
-    "initiator",
     "timestamp"
   ]
 }

@@ -43,11 +43,7 @@
         "id": {
           "type": "string"
         }
-      },
-      "required": [
-        "id",
-        "type"
-      ]
+      }
     },
     "timestamp": {
       "type": "string"
@@ -55,10 +51,8 @@
   },
   "required": [
     "content",
-    "conversationId",
     "customerId",
     "id",
-    "initiator",
     "timestamp"
   ]
 }
