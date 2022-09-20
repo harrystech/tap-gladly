@@ -5,10 +5,14 @@ import datetime
 from singer_sdk.testing import get_standard_tap_tests
 
 from tap_gladly.tap import Tapgladly
+import os
 
 SAMPLE_CONFIG = {
-    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
     # TODO: Initialize minimal tap config
+    "auth_token": 'test',
+    "project_ids": [],
+
 }
 
 
@@ -19,6 +23,7 @@ def test_standard_tap_tests():
         Tapgladly,
         config=SAMPLE_CONFIG
     )
+
     for test in tests:
         test()
 

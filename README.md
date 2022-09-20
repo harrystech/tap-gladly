@@ -77,6 +77,7 @@ Follow these instructions to contribute to this project.
 
 ```bash
 pipx install poetry
+poetry config virtualenvs.in-project true # Optional, to create a virtual env
 poetry install
 ```
 

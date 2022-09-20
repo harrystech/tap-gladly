@@ -1,4 +1,5 @@
 """REST client handling, including gladlyStream base class."""
+import base64
 
 import requests
 from pathlib import Path
@@ -8,8 +9,7 @@ from memoization import cached
 
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
-from singer_sdk.authenticators import APIKeyAuthenticator
-
+from singer_sdk.authenticators import APIKeyAuthenticator, BasicAuthenticator
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -18,25 +18,24 @@ class gladlyStream(RESTStream):
     """gladly stream class."""
 
     # TODO: Set the API's base URL here:
-    url_base = "https://api.mysample.com"
+    # url_base = "https://api.mysample.com"
 
     # OR use a dynamic url_base:
-    # @property
-    # def url_base(self) -> str:
-    #     """Return the API URL root, configurable via tap settings."""
-    #     return self.config["api_url"]
+    @property
+    def url_base(self) -> str:
+        """Return the API URL root, configurable via tap settings."""
+        return self.config["api_url_base"]
 
     records_jsonpath = "$[*]"  # Or override `parse_response`.
     next_page_token_jsonpath = "$.next_page"  # Or override `get_next_page_token`.
 
     @property
-    def authenticator(self) -> APIKeyAuthenticator:
+    def authenticator(self) -> BasicAuthenticator:
         """Return a new authenticator object."""
-        return APIKeyAuthenticator.create_for_stream(
+        return BasicAuthenticator.create_for_stream(
             self,
-            key="x-api-key",
-            value=self.config.get("api_key"),
-            location="header"
+            username=self.config.get('username'),
+            password=self.config.get('password')
         )
 
     @property
@@ -50,7 +49,7 @@ class gladlyStream(RESTStream):
         return headers
 
     def get_next_page_token(
-        self, response: requests.Response, previous_token: Optional[Any]
+            self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
         # TODO: If pagination is required, return a token which can be used to get the
@@ -68,7 +67,7 @@ class gladlyStream(RESTStream):
         return next_page_token
 
     def get_url_params(
-        self, context: Optional[dict], next_page_token: Optional[Any]
+            self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
@@ -80,7 +79,7 @@ class gladlyStream(RESTStream):
         return params
 
     def prepare_request_payload(
-        self, context: Optional[dict], next_page_token: Optional[Any]
+            self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request.
 

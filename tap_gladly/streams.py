@@ -13,10 +13,10 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 #       - Copy-paste as many times as needed to create multiple stream types.
 
 
-class UsersStream(gladlyStream):
+class ExportJobsStream(gladlyStream):
     """Define custom stream."""
-    name = "users"
-    path = "/users"
+    name = "jobs"
+    path = "/export/jobs"
     primary_keys = ["id"]
     replication_key = None
     # Optionally, you may also use `schema_filepath` in place of `schema`:
@@ -26,37 +26,50 @@ class UsersStream(gladlyStream):
         th.Property(
             "id",
             th.StringType,
-            description="The user's system ID"
+            description="Unique Job ID"
         ),
         th.Property(
-            "age",
-            th.IntegerType,
-            description="The user's age in years"
-        ),
-        th.Property(
-            "email",
+            "scheduleId",
             th.StringType,
-            description="The user's email address"
+            description="Schedule id the job belongs to"
         ),
-        th.Property("street", th.StringType),
-        th.Property("city", th.StringType),
         th.Property(
-            "state",
+            "status",
             th.StringType,
-            description="State name in ISO 3166-2 format"
+            description='Current job status: "PENDING" "IN_PROGRESS" "COMPLETED" "FAILED"'
         ),
-        th.Property("zip", th.StringType),
+        th.Property(
+            "updatedAt",
+            th.StringType,
+            description='Current job status: "PENDING" "IN_PROGRESS" "COMPLETED" "FAILED"'
+        ),
+        th.Property(
+            "parameters",
+            th.ObjectType(
+                th.Property(
+                    "type",
+                    th.StringType,
+                    description="Schedule id the job belongs to"
+                ),
+                th.Property(
+                    "startAt",
+                    th.StringType,
+                    description='Start time for the export query'
+                ),
+                th.Property(
+                    "endAt",
+                    th.StringType,
+                    description='End time for the export query'
+                ),
+            ),
+            description='Current job status: "PENDING" "IN_PROGRESS" "COMPLETED" "FAILED"'
+        ),
+        th.Property(
+            "files",
+            th.ArrayType(th.StringType),
+            description='Current job status: "PENDING" "IN_PROGRESS" "COMPLETED" "FAILED"'
+        ),
+
     ).to_dict()
 
 
-class GroupsStream(gladlyStream):
-    """Define custom stream."""
-    name = "groups"
-    path = "/groups"
-    primary_keys = ["id"]
-    replication_key = "modified"
-    schema = th.PropertiesList(
-        th.Property("name", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("modified", th.DateTimeType),
-    ).to_dict()

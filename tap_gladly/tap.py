@@ -7,14 +7,12 @@ from singer_sdk import typing as th  # JSON schema typing helpers
 # TODO: Import your custom stream types here:
 from tap_gladly.streams import (
     gladlyStream,
-    UsersStream,
-    GroupsStream,
+    ExportJobsStream,
 )
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
-    UsersStream,
-    GroupsStream,
+    ExportJobsStream,
 ]
 
 
@@ -25,16 +23,23 @@ class Tapgladly(Tap):
     # TODO: Update this section with the actual config values you expect:
     config_jsonschema = th.PropertiesList(
         th.Property(
-            "auth_token",
+            "username",
             th.StringType,
             required=True,
-            description="The token to authenticate against the API service"
+            description="The username to authenticate against the API service"
+        ),
+        th.Property(
+            "password",
+            th.StringType,
+            required=True,
+            description="The username to authenticate against the API service"
         ),
         th.Property(
             "project_ids",
             th.ArrayType(th.StringType),
             required=True,
-            description="Project IDs to replicate"
+            description="Project IDs to replicate",
+            default=["tap-gladly"]
         ),
         th.Property(
             "start_date",
@@ -42,7 +47,7 @@ class Tapgladly(Tap):
             description="The earliest record date to sync"
         ),
         th.Property(
-            "api_url",
+            "api_url_base",
             th.StringType,
             default="https://api.mysample.com",
             description="The url for the API service"
