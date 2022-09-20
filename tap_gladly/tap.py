@@ -2,28 +2,39 @@
 
 from typing import List
 
-from singer_sdk import Tap, Stream
+from singer_sdk import Stream, Tap
 from singer_sdk import typing as th  # JSON schema typing helpers
+
 # TODO: Import your custom stream types here:
 from tap_gladly.streams import (
-    gladlyStream,
-    ExportJobsStream, ExportFileConversationItemsStream, ExportFileConversationItemsStreamChatMessage,
-    ExportFileConversationItemsStreamTopicChange,
+    ExportFileConversationItemsChatMessage,
+    ExportFileConversationItemsConversationNote,
+    ExportFileConversationItemsPhoneCall,
+    ExportFileConversationItemsSms,
+    ExportFileConversationItemsStatusChange,
+    ExportFileConversationItemsTopicChange,
+    ExportFileConversationItemsVoiceMail,
+    ExportJobsStream,
 )
 
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
     ExportJobsStream,
-    ExportFileConversationItemsStreamChatMessage,
-    ExportFileConversationItemsStreamTopicChange,
+    ExportFileConversationItemsChatMessage,
+    ExportFileConversationItemsConversationNote,
+    ExportFileConversationItemsTopicChange,
+    ExportFileConversationItemsSms,
+    ExportFileConversationItemsStatusChange,
+    ExportFileConversationItemsPhoneCall,
+    ExportFileConversationItemsVoiceMail,
 ]
 
 
 class Tapgladly(Tap):
     """gladly tap class."""
-    name = "tap-gladly"
 
+    name = "tap-gladly"
 
     # TODO: Update this section with the actual config values you expect:
     config_jsonschema = th.PropertiesList(
@@ -31,31 +42,28 @@ class Tapgladly(Tap):
             "username",
             th.StringType,
             required=True,
-            description="The username to authenticate against the API service"
+            description="The username to authenticate against the API service",
         ),
         th.Property(
             "password",
             th.StringType,
             required=True,
-            description="The username to authenticate against the API service"
+            description="The username to authenticate against the API service",
         ),
         th.Property(
             "project_ids",
             th.ArrayType(th.StringType),
-            required=True,
             description="Project IDs to replicate",
-            default=["tap-gladly"]
         ),
         th.Property(
             "start_date",
             th.DateTimeType,
-            description="The earliest record date to sync"
+            description="The earliest record date to sync",
         ),
         th.Property(
             "api_url_base",
             th.StringType,
-            default="https://api.mysample.com",
-            description="The url for the API service"
+            description="The url for the API service",
         ),
     ).to_dict()
 

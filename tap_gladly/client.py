@@ -1,16 +1,11 @@
 """REST client handling, including gladlyStream base class."""
-import base64
-import json
+from pathlib import Path
+from typing import Any, Dict, Iterable, Optional
 
 import requests
-from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable
-
-from memoization import cached
-
+from singer_sdk.authenticators import BasicAuthenticator
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
-from singer_sdk.authenticators import APIKeyAuthenticator, BasicAuthenticator
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -18,7 +13,7 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 class gladlyStream(RESTStream):
     """gladly stream class."""
 
-    _common_date_format = '%Y-%m-%dT%H:%M:%SZ'
+    _common_date_format = "%Y-%m-%dT%H:%M:%SZ"
 
     # OR use a dynamic url_base:
     @property
@@ -34,8 +29,8 @@ class gladlyStream(RESTStream):
         """Return a new authenticator object."""
         return BasicAuthenticator.create_for_stream(
             self,
-            username=self.config.get('username'),
-            password=self.config.get('password')
+            username=self.config["username"],
+            password=self.config["password"],
         )
 
     @property
@@ -49,13 +44,13 @@ class gladlyStream(RESTStream):
         return headers
 
     def get_next_page_token(
-            self, response: requests.Response, previous_token: Optional[Any]
+        self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """No pagination."""
         return None
 
     def get_url_params(
-            self, context: Optional[dict], next_page_token: Optional[Any]
+        self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
@@ -67,7 +62,7 @@ class gladlyStream(RESTStream):
         return params
 
     def prepare_request_payload(
-            self, context: Optional[dict], next_page_token: Optional[Any]
+        self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request.
 
@@ -81,7 +76,7 @@ class gladlyStream(RESTStream):
         # TODO: Parse response body and return a set of records.
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
 
-    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+    def post_process(self, row, context):
         """As needed, append or transform raw data to match expected structure."""
         # TODO: Delete this method if not needed.
         return row
