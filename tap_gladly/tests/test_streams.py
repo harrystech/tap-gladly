@@ -10,12 +10,19 @@ from tap_gladly.streams import ExportJobsStream, ExportFileConversationItemsStre
     ExportFileConversationItemsStreamChatMessage
 from tap_gladly.tap import Tapgladly
 
+SAMPLE_CONFIG = {
+    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime(gladlyStream._common_date_format),
+    "username": 'test',
+    "password": 'test',
+    "api_base_url": "api_base_url"
+}
+
 
 def test_started_at():
-    tap_gladly = Tapgladly(config={'start_date': (
+    tap_gladly = Tapgladly(config=dict(SAMPLE_CONFIG, start_date=(
             datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=3)).strftime(
-        gladlyStream._common_date_format)},
-        parse_env_config=True)
+        gladlyStream._common_date_format)),
+                           parse_env_config=False)
     export_jobs_stream = ExportJobsStream(tap_gladly)
     before_row = {'record': 'data', 'parameters': {
         'startAt': (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=3)).strftime(
@@ -29,10 +36,10 @@ def test_started_at():
 
 
 def test_filter_by_content_type():
-    tap_gladly = Tapgladly(config={'start_date': (
+    tap_gladly = Tapgladly(config=dict(SAMPLE_CONFIG, start_date=(
             datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=2)).strftime(
-        gladlyStream._common_date_format)},
-        parse_env_config=True)
+        gladlyStream._common_date_format)),
+                           parse_env_config=False)
     efcis = ExportFileConversationItemsStreamChatMessage(tap_gladly)
 
     good_content_row = {'record': 'data', 'content': {'type': efcis.content_type}}

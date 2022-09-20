@@ -10,10 +10,9 @@ import os
 
 SAMPLE_CONFIG = {
     "start_date": datetime.datetime.now(datetime.timezone.utc).strftime(gladlyStream._common_date_format),
-    # TODO: Initialize minimal tap config
-    "auth_token": 'test',
-    "project_ids": [],
-    "content_type": "chat_message"
+    "username": 'test',
+    "password": 'test',
+    "api_base_url": "api_base_url"
 }
 
 
@@ -27,4 +26,3 @@ def test_standard_tap_tests():
 
     for test in tests:
         test()
-

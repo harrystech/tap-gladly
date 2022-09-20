@@ -2,7 +2,7 @@
 name = "tap-gladly"
 version = "0.0.1"
 description = "`tap-gladly` is a Singer tap for gladly, built with the Meltano SDK for Singer Taps."
-authors = ["Youssef Naim"]
+authors = ["harrystech"]
 keywords = [
     "ELT",
     "gladly",
