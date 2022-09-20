@@ -1,5 +1,6 @@
 """REST client handling, including gladlyStream base class."""
 import base64
+import json
 
 import requests
 from pathlib import Path
@@ -55,6 +56,7 @@ class gladlyStream(RESTStream):
         # TODO: If pagination is required, return a token which can be used to get the
         #       next page. If this is the final page, return "None" to end the
         #       pagination loop.
+        return None
         if self.next_page_token_jsonpath:
             all_matches = extract_jsonpath(
                 self.next_page_token_jsonpath, response.json()
