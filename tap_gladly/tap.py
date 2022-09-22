@@ -14,6 +14,7 @@ from tap_gladly.streams import (
     ExportFileConversationItemsSms,
     ExportFileConversationItemsTopicChange,
     ExportFileConversationItemsVoiceMail,
+    ExportFileTopicsStream,
     ExportJobsStream,
 )
 
@@ -26,6 +27,7 @@ STREAM_TYPES = [
     ExportFileConversationItemsConversationStatusChange,
     ExportFileConversationItemsPhoneCall,
     ExportFileConversationItemsVoiceMail,
+    ExportFileTopicsStream,
 ]
 
 
