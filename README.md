@@ -24,19 +24,34 @@ pipx install git+https://github.com/ORG_NAME/tap-gladly.git@main
 
 -->
 
+## Capabilities
+
+* `catalog`
+* `state`
+* `discover`
+* `about`
+* `stream-maps`
+* `schema-flattening`
+
+## Settings
+
+| Setting             | Required | Default | Description |
+|:--------------------|:--------:|:-------:|:------------|
+| username            | True     | None    | The username to authenticate against the API service |
+| password            | True     | None    | The username to authenticate against the API service |
+| project_ids         | False    | None    | Project IDs to replicate |
+| start_date          | True     | None    | The earliest record date to sync, format %Y-%m-%dT%H:%M:%SZ |
+| api_url_base        | True     | None    | The url for the API service |
+| stream_maps         | False    | None    | Config object for stream maps capability. For more information check out [Stream Maps](https://sdk.meltano.com/en/latest/stream_maps.html). |
+| stream_map_config   | False    | None    | User-defined config values to be used within map expressions. |
+| flattening_enabled  | False    | None    | 'True' to enable schema flattening and automatically expand nested properties. |
+| flattening_max_depth| False    | None    | The max depth to flatten schemas. |
+
+A full list of supported settings and capabilities is available by running: `tap-gladly --about`
+
 ## Configuration
 
 ### Accepted Config Options
-
-<!--
-Developer TODO: Provide a list of config options accepted by the tap.
-
-This section can be created by copy-pasting the CLI output from:
-
-```
-tap-gladly --about --format=markdown
-```
--->
 
 A full list of supported settings and capabilities for this
 tap is available by running:
@@ -77,6 +92,7 @@ Follow these instructions to contribute to this project.
 
 ```bash
 pipx install poetry
+poetry config virtualenvs.in-project true # Optional, to create a virtual env
 poetry install
 ```
 

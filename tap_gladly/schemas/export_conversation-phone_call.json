@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "conversationId": {
+      "type": "string"
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "startedAt": {
+          "type": "string"
+        },
+        "answeredAt": {
+          "type": "string"
+        },
+        "completedAt": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "recordingUrl": {
+          "type": "string"
+        },
+        "recordingStatus": {
+          "type": "string"
+        },
+        "recordingDuration": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "startedAt",
+        "to",
+        "type"
+      ]
+    },
+    "customerId": {
+      "type": "string"
+    },
+    "initiator": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "responder": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "content",
+    "customerId",
+    "id",
+    "timestamp"
+  ]
+}

@@ -1,15 +1,11 @@
 """REST client handling, including gladlyStream base class."""
+from pathlib import Path
+from typing import Any, Dict, Iterable, Optional
 
 import requests
-from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable
-
-from memoization import cached
-
+from singer_sdk.authenticators import BasicAuthenticator
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
-from singer_sdk.authenticators import APIKeyAuthenticator
-
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -17,26 +13,24 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 class gladlyStream(RESTStream):
     """gladly stream class."""
 
-    # TODO: Set the API's base URL here:
-    url_base = "https://api.mysample.com"
+    _common_date_format = "%Y-%m-%dT%H:%M:%SZ"
 
     # OR use a dynamic url_base:
-    # @property
-    # def url_base(self) -> str:
-    #     """Return the API URL root, configurable via tap settings."""
-    #     return self.config["api_url"]
+    @property
+    def url_base(self) -> str:
+        """Return the API URL root, configurable via tap settings."""
+        return self.config["api_url_base"]
 
     records_jsonpath = "$[*]"  # Or override `parse_response`.
     next_page_token_jsonpath = "$.next_page"  # Or override `get_next_page_token`.
 
     @property
-    def authenticator(self) -> APIKeyAuthenticator:
+    def authenticator(self) -> BasicAuthenticator:
         """Return a new authenticator object."""
-        return APIKeyAuthenticator.create_for_stream(
+        return BasicAuthenticator.create_for_stream(
             self,
-            key="x-api-key",
-            value=self.config.get("api_key"),
-            location="header"
+            username=self.config["username"],
+            password=self.config["password"],
         )
 
     @property
@@ -52,20 +46,8 @@ class gladlyStream(RESTStream):
     def get_next_page_token(
         self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
-        """Return a token for identifying next page or None if no more pages."""
-        # TODO: If pagination is required, return a token which can be used to get the
-        #       next page. If this is the final page, return "None" to end the
-        #       pagination loop.
-        if self.next_page_token_jsonpath:
-            all_matches = extract_jsonpath(
-                self.next_page_token_jsonpath, response.json()
-            )
-            first_match = next(iter(all_matches), None)
-            next_page_token = first_match
-        else:
-            next_page_token = response.headers.get("X-Next-Page", None)
-
-        return next_page_token
+        """No pagination."""
+        return None
 
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
@@ -94,7 +76,7 @@ class gladlyStream(RESTStream):
         # TODO: Parse response body and return a set of records.
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
 
-    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+    def post_process(self, row, context):
         """As needed, append or transform raw data to match expected structure."""
         # TODO: Delete this method if not needed.
         return row
