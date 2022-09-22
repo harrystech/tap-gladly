@@ -1,17 +1,16 @@
 """Stream type classes for tap-gladly."""
 import abc
 import json
-from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Optional
 
+import pendulum
 import requests
 from singer_sdk import exceptions
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 
 from tap_gladly.client import gladlyStream
 
-# TODO: Delete this is if not using json files for schema definition
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
@@ -30,9 +29,10 @@ class ExportJobsStream(gladlyStream):
         """As needed, append or transform raw data to match expected structure."""
         if "start_date" not in self.config:
             return row
-        if datetime.strptime(
-            row["parameters"]["startAt"], self._common_date_format
-        ) > datetime.strptime(self.config["start_date"], self._common_date_format):
+
+        if pendulum.parse(row["parameters"]["startAt"]) > pendulum.parse(
+            self.config["start_date"]
+        ):
             return row
         return
 

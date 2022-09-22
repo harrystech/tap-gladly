@@ -13,8 +13,6 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 class gladlyStream(RESTStream):
     """gladly stream class."""
 
-    _common_date_format = "%Y-%m-%dT%H:%M:%SZ"
-
     # OR use a dynamic url_base:
     @property
     def url_base(self) -> str:
