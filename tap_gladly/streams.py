@@ -14,22 +14,19 @@ from tap_gladly.client import gladlyStream
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
-class ExportJobsStream(gladlyStream):
+class ExportCompletedJobsStream(gladlyStream):
     """List export jobs stream."""
 
     name = "jobs"
-    path = "/export/jobs"
+    path = "/export/jobs?status=COMPLETED"
     primary_keys = ["id"]
     replication_key = None
     # Optionally, you may also use `schema_filepath` in place of `schema`:
     schema_filepath = SCHEMAS_DIR / "export_jobs.json"
 
     def post_process(self, row, context):
-        """As needed, append or transform raw data to match expected structure."""
-        if "start_date" not in self.config:
-            return row
-
-        if pendulum.parse(row["parameters"]["startAt"]) >= pendulum.parse(
+        """Filter jobs that finished before start_date."""
+        if pendulum.parse(row["parameters"]["endAt"]) >= pendulum.parse(
             self.config["start_date"]
         ):
             return row
@@ -47,7 +44,7 @@ class ExportFileTopicsStream(gladlyStream):
     path = "/export/jobs/{job_id}/files/topics.jsonl"
     primary_keys = ["id"]
     replication_key = None
-    parent_stream_type = ExportJobsStream
+    parent_stream_type = ExportCompletedJobsStream
     ignore_parent_replication_key = True
     schema_filepath = SCHEMAS_DIR / "export_topics.json"
 
@@ -64,7 +61,7 @@ class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
     path = "/export/jobs/{job_id}/files/conversation_items.jsonl"
     primary_keys = ["id"]
     replication_key = None
-    parent_stream_type = ExportJobsStream
+    parent_stream_type = ExportCompletedJobsStream
     ignore_parent_replication_key = True
 
     @property

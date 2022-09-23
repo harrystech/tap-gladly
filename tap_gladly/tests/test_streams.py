@@ -4,7 +4,10 @@ import datetime
 
 import pendulum
 
-from tap_gladly.streams import ExportFileConversationItemsChatMessage, ExportJobsStream
+from tap_gladly.streams import (
+    ExportCompletedJobsStream,
+    ExportFileConversationItemsChatMessage,
+)
 from tap_gladly.tap import Tapgladly
 
 SAMPLE_CONFIG = {
@@ -23,16 +26,16 @@ def test_started_at():
         ),
         parse_env_config=False,
     )
-    export_jobs_stream = ExportJobsStream(tap_gladly)
+    export_jobs_stream = ExportCompletedJobsStream(tap_gladly)
     before_row = {
         "record": "data",
         "parameters": {
-            "startAt": (pendulum.now() - datetime.timedelta(days=3)).isoformat()
+            "endAt": (pendulum.now() - datetime.timedelta(days=3)).isoformat()
         },
     }
     after_row = {
         "record": "data",
-        "parameters": {"startAt": pendulum.now().isoformat()},
+        "parameters": {"endAt": pendulum.now().isoformat()},
     }
     assert not export_jobs_stream.post_process(before_row, None)
     assert export_jobs_stream.post_process(after_row, None)
