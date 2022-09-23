@@ -73,8 +73,3 @@ class gladlyStream(RESTStream):
         """Parse the response and return an iterator of result records."""
         # TODO: Parse response body and return a set of records.
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
-
-    def post_process(self, row, context):
-        """As needed, append or transform raw data to match expected structure."""
-        # TODO: Delete this method if not needed.
-        return row

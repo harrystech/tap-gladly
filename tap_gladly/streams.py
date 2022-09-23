@@ -24,13 +24,12 @@ class ExportJobsStream(gladlyStream):
     # Optionally, you may also use `schema_filepath` in place of `schema`:
     schema_filepath = SCHEMAS_DIR / "export_jobs.json"
 
-    # start_date
     def post_process(self, row, context):
         """As needed, append or transform raw data to match expected structure."""
         if "start_date" not in self.config:
             return row
 
-        if pendulum.parse(row["parameters"]["startAt"]) > pendulum.parse(
+        if pendulum.parse(row["parameters"]["startAt"]) >= pendulum.parse(
             self.config["start_date"]
         ):
             return row
