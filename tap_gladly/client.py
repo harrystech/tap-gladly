@@ -13,8 +13,6 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 class gladlyStream(RESTStream):
     """gladly stream class."""
 
-    _common_date_format = "%Y-%m-%dT%H:%M:%SZ"
-
     # OR use a dynamic url_base:
     @property
     def url_base(self) -> str:
@@ -75,8 +73,3 @@ class gladlyStream(RESTStream):
         """Parse the response and return an iterator of result records."""
         # TODO: Parse response body and return a set of records.
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
-
-    def post_process(self, row, context):
-        """As needed, append or transform raw data to match expected structure."""
-        # TODO: Delete this method if not needed.
-        return row

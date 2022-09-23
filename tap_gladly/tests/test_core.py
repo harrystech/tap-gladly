@@ -1,16 +1,13 @@
 """Tests standard tap features using the built-in SDK tests library."""
 
-import datetime
 
+import pendulum
 from singer_sdk.testing import get_standard_tap_tests
 
-from tap_gladly.client import gladlyStream
 from tap_gladly.tap import Tapgladly
 
 SAMPLE_CONFIG = {
-    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime(
-        gladlyStream._common_date_format
-    ),
+    "start_date": pendulum.now().isoformat(),
     "username": "test",
     "password": "test",
     "api_url_base": "api_base_url",

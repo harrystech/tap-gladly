@@ -1,44 +1,57 @@
 """Stream type classes for tap-gladly."""
 import abc
 import json
-from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Optional
 
+import pendulum
 import requests
 from singer_sdk import exceptions
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 
 from tap_gladly.client import gladlyStream
 
-# TODO: Delete this is if not using json files for schema definition
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
-class ExportJobsStream(gladlyStream):
+class ExportCompletedJobsStream(gladlyStream):
     """List export jobs stream."""
 
     name = "jobs"
-    path = "/export/jobs"
+    path = "/export/jobs?status=COMPLETED"
     primary_keys = ["id"]
     replication_key = None
     # Optionally, you may also use `schema_filepath` in place of `schema`:
     schema_filepath = SCHEMAS_DIR / "export_jobs.json"
 
-    # start_date
     def post_process(self, row, context):
-        """As needed, append or transform raw data to match expected structure."""
-        if "start_date" not in self.config:
-            return row
-        if datetime.strptime(
-            row["parameters"]["startAt"], self._common_date_format
-        ) > datetime.strptime(self.config["start_date"], self._common_date_format):
+        """Filter jobs that finished before start_date."""
+        if pendulum.parse(row["parameters"]["endAt"]) >= pendulum.parse(
+            self.config["start_date"]
+        ):
             return row
         return
 
     def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
         """Return a context dictionary for child streams."""
         return {"job_id": record["id"]}
+
+
+class ExportFileTopicsStream(gladlyStream):
+    """Abstract class, export conversation items stream."""
+
+    name = "topics"
+    path = "/export/jobs/{job_id}/files/topics.jsonl"
+    primary_keys = ["id"]
+    replication_key = None
+    parent_stream_type = ExportCompletedJobsStream
+    ignore_parent_replication_key = True
+    schema_filepath = SCHEMAS_DIR / "export_topics.json"
+
+    def parse_response(self, response: requests.Response) -> Iterable[dict]:
+        """Parse the response and return an iterator of result records."""
+        for line in response.iter_lines():
+            yield from extract_jsonpath(self.records_jsonpath, input=json.loads(line))
 
 
 class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
@@ -48,7 +61,7 @@ class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
     path = "/export/jobs/{job_id}/files/conversation_items.jsonl"
     primary_keys = ["id"]
     replication_key = None
-    parent_stream_type = ExportJobsStream
+    parent_stream_type = ExportCompletedJobsStream
     ignore_parent_replication_key = True
 
     @property
