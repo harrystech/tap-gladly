@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "conversationId": {
+      "type": "string"
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "activityType": {
+          "type": "string"
+        },
+        "sourceName": {
+          "type": "string"
+        },
+        "link": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            }
+          }
+        },
+        "occurredAt": {
+          "type": "string"
+        },
+        "receivedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "activityType",
+        "type"
+      ]
+    },
+    "customerId": {
+      "type": "string"
+    },
+    "initiator": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ]
+    },
+    "timestamp": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "content",
+    "customerId",
+    "id",
+    "timestamp"
+  ]
+}

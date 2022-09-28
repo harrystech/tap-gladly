@@ -75,6 +75,11 @@ class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
             "conversation_status_change": "export_conversation-conversation_status_change.json",  # noqa
             "phone_call": "export_conversation-phone_call.json",
             "voicemail": "export_conversation-voicemail.json",
+            "customer_activity": "export_conversation-customer_activity.json",
+            "facebook_message": "export_conversation-facebook_message.json",
+            "twitter": "export_conversation-twitter.json",
+            "instagram_direct": "export_conversation-instagram_direct.json",
+            "whatsapp": "export_conversation-whatsapp.json",
         }
 
         try:
@@ -148,3 +153,38 @@ class ExportFileConversationItemsVoiceMail(ExportFileConversationItemsStream):
 
     name = "conversation_voicemail"
     content_type = "voicemail"
+
+
+class ExportFileConversationItemsCustomerActivity(ExportFileConversationItemsStream):
+    """Export conversation items stream where content type is voicemail."""
+
+    name = "conversation_customer_activity"
+    content_type = "customer_activity"
+
+
+class ExportFileConversationItemsFacebookMessage(ExportFileConversationItemsStream):
+    """Export conversation items stream where content type is voicemail."""
+
+    name = "conversation_facebook_message"
+    content_type = "facebook_message"
+
+
+class ExportFileConversationItemsTwitter(ExportFileConversationItemsStream):
+    """Export conversation items stream where content type is voicemail."""
+
+    name = "conversation_twitter"
+    content_type = "twitter"
+
+
+class ExportFileConversationItemsInstagramDirect(ExportFileConversationItemsStream):
+    """Export conversation items stream where content type is voicemail."""
+
+    name = "conversation_instagram_direct"
+    content_type = "instagram_direct"
+
+
+class ExportFileConversationItemsWhatsapp(ExportFileConversationItemsStream):
+    """Export conversation items stream where content type is voicemail."""
+
+    name = "conversation_whatsapp"
+    content_type = "whatsapp"

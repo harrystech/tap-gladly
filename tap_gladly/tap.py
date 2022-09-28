@@ -11,10 +11,15 @@ from tap_gladly.streams import (
     ExportFileConversationItemsChatMessage,
     ExportFileConversationItemsConversationNote,
     ExportFileConversationItemsConversationStatusChange,
+    ExportFileConversationItemsCustomerActivity,
+    ExportFileConversationItemsFacebookMessage,
+    ExportFileConversationItemsInstagramDirect,
     ExportFileConversationItemsPhoneCall,
     ExportFileConversationItemsSms,
     ExportFileConversationItemsTopicChange,
+    ExportFileConversationItemsTwitter,
     ExportFileConversationItemsVoiceMail,
+    ExportFileConversationItemsWhatsapp,
     ExportFileTopicsStream,
 )
 
@@ -28,6 +33,11 @@ STREAM_TYPES = [
     ExportFileConversationItemsPhoneCall,
     ExportFileConversationItemsVoiceMail,
     ExportFileTopicsStream,
+    ExportFileConversationItemsCustomerActivity,
+    ExportFileConversationItemsFacebookMessage,
+    ExportFileConversationItemsTwitter,
+    ExportFileConversationItemsInstagramDirect,
+    ExportFileConversationItemsWhatsapp,
 ]
 
 
