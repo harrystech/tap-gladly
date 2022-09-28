@@ -27,7 +27,7 @@ class ExportCompletedJobsStream(gladlyStream):
     def post_process(self, row, context):
         """Filter jobs that finished before start_date."""
         if pendulum.parse(row["parameters"]["endAt"]) >= pendulum.parse(
-                self.config["start_date"]
+            self.config["start_date"]
         ):
             return row
         return
@@ -79,7 +79,7 @@ class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
             "facebook_message": "export_conversation-facebook_message.json",
             "twitter": "export_conversation-twitter.json",
             "instagram_direct": "export_conversation-instagram_direct.json",
-            "whatsapp": "export_conversation-whatsapp.json"
+            "whatsapp": "export_conversation-whatsapp.json",
         }
 
         try:
