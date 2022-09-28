@@ -16,10 +16,14 @@ from tap_gladly.streams import (
     ExportFileConversationItemsTopicChange,
     ExportFileConversationItemsVoiceMail,
     ExportFileTopicsStream,
+    InboxStream,
+    ConversationStream, ExportFileConversationItemsStream
 )
 
 STREAM_TYPES = [
+    ConversationStream,
     ExportCompletedJobsStream,
+    ExportFileConversationItemsStream,
     ExportFileConversationItemsChatMessage,
     ExportFileConversationItemsConversationNote,
     ExportFileConversationItemsTopicChange,
@@ -28,6 +32,7 @@ STREAM_TYPES = [
     ExportFileConversationItemsPhoneCall,
     ExportFileConversationItemsVoiceMail,
     ExportFileTopicsStream,
+    InboxStream
 ]
 
 
@@ -36,7 +41,6 @@ class Tapgladly(Tap):
 
     name = "tap-gladly"
 
-    # TODO: Update this section with the actual config values you expect:
     config_jsonschema = th.PropertiesList(
         th.Property(
             "username",

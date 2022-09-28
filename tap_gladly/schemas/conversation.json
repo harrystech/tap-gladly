@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "customerId": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "agentId": {
+      "type": "string"
+    },
+    "inboxId": {
+      "type": "string"
+    },
+    "topicIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "closedAt": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "createdAt",
+    "customerId",
+    "id",
+    "inboxId",
+    "status"
+  ]
+}
