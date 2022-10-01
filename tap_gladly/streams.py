@@ -1,8 +1,9 @@
 """Stream type classes for tap-gladly."""
 import abc
+import csv
 import json
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Any, Dict
 
 import pendulum
 import requests
@@ -27,7 +28,7 @@ class ExportCompletedJobsStream(gladlyStream):
     def post_process(self, row, context):
         """Filter jobs that finished before start_date."""
         if pendulum.parse(row["parameters"]["endAt"]) >= pendulum.parse(
-            self.config["start_date"]
+                self.config["start_date"]
         ):
             return row
         return
@@ -188,3 +189,63 @@ class ExportFileConversationItemsWhatsapp(ExportFileConversationItemsStream):
 
     name = "conversation_whatsapp"
     content_type = "whatsapp"
+
+
+class ConversationExportReportStream(gladlyStream):
+    """gladly stream class."""
+
+    rest_method = "POST"
+
+    @property
+    def http_headers(self) -> dict:
+        """Return the http headers needed."""
+        headers = {}
+        if "user_agent" in self.config:
+            headers["User-Agent"] = self.config.get("user_agent")
+        # If not using an authenticator, you may also provide inline auth headers:
+        # headers["Private-Token"] = self.config.get("auth_token")
+        return headers
+
+    def get_next_page_token(
+            self, response: requests.Response, previous_token: Optional[Any]
+    ) -> Optional[Any]:
+        """No pagination."""
+        return None
+
+    def get_url_params(
+            self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Return a dictionary of values to be used in URL parameterization."""
+        params: dict = {}
+        if next_page_token:
+            params["page"] = next_page_token
+        if self.replication_key:
+            params["sort"] = "asc"
+            params["order_by"] = self.replication_key
+        return params
+
+    def prepare_request_payload(
+            self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Optional[dict]:
+        """Prepare the data payload for the REST API request.
+
+        By default, no payload will be sent (return None).
+        """
+        # TODO: Delete this method if no payload is required. (Most REST APIs.)
+        payload: dict = {
+            "metricSet": "ConversationExportReport",
+            "startAt": pendulum.parse(
+                self.config["start_date"]
+            ),
+            "endAt": pendulum.parse(
+                self.config["end_date"]
+            ),
+            "aggregationLevel": "halfHourly"
+        }
+
+        return payload
+
+    def parse_response(self, response: requests.Response) -> Iterable[dict]:
+        """Parse the response and return an iterator of result records."""
+        #  TODO(Youssef): Parse csv rows into json rows
+        yield [dict(r) for r in csv.DictReader(response.content)]
