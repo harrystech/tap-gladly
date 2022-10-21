@@ -26,10 +26,13 @@ class ExportCompletedJobsStream(gladlyStream):
 
     def post_process(self, row, context):
         """Filter jobs that finished before start_date."""
-        if pendulum.parse(row["parameters"]["endAt"]) >= pendulum.parse(
-            self.config["start_date"]
-        ):
-            return row
+        job_completion_date = pendulum.parse(row["parameters"]["endAt"])
+        if pendulum.parse(self.config["start_date"]) <= job_completion_date:
+            if "end_date" in self.config:
+                if pendulum.parse(self.config["end_date"]) >= job_completion_date:
+                    return row
+            else:
+                return row
         return
 
     def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
