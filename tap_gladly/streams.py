@@ -3,7 +3,7 @@ import abc
 import csv
 import json
 from pathlib import Path
-from typing import Iterable, Optional, Any, Dict
+from typing import Any, Iterable, Optional
 
 import pendulum
 import requests
@@ -27,10 +27,13 @@ class ExportCompletedJobsStream(gladlyStream):
 
     def post_process(self, row, context):
         """Filter jobs that finished before start_date."""
-        if pendulum.parse(row["parameters"]["endAt"]) >= pendulum.parse(
-                self.config["start_date"]
-        ):
-            return row
+        job_completion_date = pendulum.parse(row["parameters"]["endAt"])
+        if pendulum.parse(self.config["start_date"]) <= job_completion_date:
+            if "end_date" in self.config:
+                if pendulum.parse(self.config["end_date"]) >= job_completion_date:
+                    return row
+            else:
+                return row
         return
 
     def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
@@ -191,61 +194,40 @@ class ExportFileConversationItemsWhatsapp(ExportFileConversationItemsStream):
     content_type = "whatsapp"
 
 
-class ConversationExportReportStream(gladlyStream):
-    """gladly stream class."""
+class ReportsConversationTimestampsReportStream(gladlyStream):
+    """gladly stream class for Conversation Timestamps Report."""
 
     rest_method = "POST"
 
-    @property
-    def http_headers(self) -> dict:
-        """Return the http headers needed."""
-        headers = {}
-        if "user_agent" in self.config:
-            headers["User-Agent"] = self.config.get("user_agent")
-        # If not using an authenticator, you may also provide inline auth headers:
-        # headers["Private-Token"] = self.config.get("auth_token")
-        return headers
-
-    def get_next_page_token(
-            self, response: requests.Response, previous_token: Optional[Any]
-    ) -> Optional[Any]:
-        """No pagination."""
-        return None
-
-    def get_url_params(
-            self, context: Optional[dict], next_page_token: Optional[Any]
-    ) -> Dict[str, Any]:
-        """Return a dictionary of values to be used in URL parameterization."""
-        params: dict = {}
-        if next_page_token:
-            params["page"] = next_page_token
-        if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
-        return params
+    name = "reports__conversation_timestamps_report"
+    path = "/reports"
+    schema_filepath = SCHEMAS_DIR / "reports__conversation_timestamps_report.json"
 
     def prepare_request_payload(
-            self, context: Optional[dict], next_page_token: Optional[Any]
+        self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request.
 
         By default, no payload will be sent (return None).
         """
-        # TODO: Delete this method if no payload is required. (Most REST APIs.)
         payload: dict = {
-            "metricSet": "ConversationExportReport",
-            "startAt": pendulum.parse(
-                self.config["start_date"]
+            "metricSet": "ConversationTimestampsReport",
+            "startAt": pendulum.parse(self.config["start_date"]).format(  # type: ignore
+                "YYYY-MM-DD"
             ),
-            "endAt": pendulum.parse(
-                self.config["end_date"]
+            "endAt": (
+                pendulum.parse(self.config["end_date"])
+                if "end_date" in self.config
+                else pendulum.now()
+            ).format(  # type: ignore
+                "YYYY-MM-DD"
             ),
-            "aggregationLevel": "halfHourly"
+            "timezone": "UTC",
         }
 
         return payload
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result records."""
-        #  TODO(Youssef): Parse csv rows into json rows
-        yield [dict(r) for r in csv.DictReader(response.content)]
+        gen_decoded_response = (line.decode("utf-8") for line in response.iter_lines())
+        yield from csv.DictReader(gen_decoded_response)

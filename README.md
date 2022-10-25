@@ -1,6 +1,6 @@
 # tap-gladly
 
-`tap-gladly` is a Singer tap for gladly.
+`tap-gladly` is a Singer tap for Gladly and the Export API
 
 Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
 
@@ -40,7 +40,8 @@ pipx install git+https://github.com/ORG_NAME/tap-gladly.git@main
 | username            | True     | None    | The username to authenticate against the API service |
 | password            | True     | None    | The username to authenticate against the API service |
 | project_ids         | False    | None    | Project IDs to replicate |
-| start_date          | True     | None    | The earliest record date to sync, format %Y-%m-%dT%H:%M:%SZ |
+| start_date          | True     | None    | The earliest job date to sync, format %Y-%m-%dT%H:%M:%SZ |
+| end_date            | False    | None    | The latest job date to sync, format %Y-%m-%dT%H:%M:%SZ |
 | api_url_base        | True     | None    | The url for the API service |
 | stream_maps         | False    | None    | Config object for stream maps capability. For more information check out [Stream Maps](https://sdk.meltano.com/en/latest/stream_maps.html). |
 | stream_map_config   | False    | None    | User-defined config values to be used within map expressions. |

@@ -21,6 +21,7 @@ from tap_gladly.streams import (
     ExportFileConversationItemsVoiceMail,
     ExportFileConversationItemsWhatsapp,
     ExportFileTopicsStream,
+    ReportsConversationTimestampsReportStream,
 )
 
 STREAM_TYPES = [
@@ -38,6 +39,7 @@ STREAM_TYPES = [
     ExportFileConversationItemsTwitter,
     ExportFileConversationItemsInstagramDirect,
     ExportFileConversationItemsWhatsapp,
+    ReportsConversationTimestampsReportStream,
 ]
 
 
@@ -69,7 +71,12 @@ class Tapgladly(Tap):
             "start_date",
             th.DateTimeType,
             required=True,
-            description="The earliest record date to sync, format %Y-%m-%dT%H:%M:%SZ",
+            description="The earliest job date to sync, format %Y-%m-%dT%H:%M:%SZ",
+        ),
+        th.Property(
+            "end_date",
+            th.DateTimeType,
+            description="The latest job date to sync, format %Y-%m-%dT%H:%M:%SZ",
         ),
         th.Property(
             "api_url_base",

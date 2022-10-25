@@ -41,6 +41,37 @@ def test_started_at():
     assert export_jobs_stream.post_process(after_row, None)
 
 
+def test_data_interval():
+    tap_gladly = Tapgladly(
+        config=dict(
+            SAMPLE_CONFIG,
+            start_date=(pendulum.now() - datetime.timedelta(days=2)).isoformat(),
+            end_date=(pendulum.now() - datetime.timedelta(days=1)).isoformat(),
+        ),
+        parse_env_config=False,
+    )
+    export_jobs_stream = ExportCompletedJobsStream(tap_gladly)
+    before_row = {
+        "record": "data",
+        "parameters": {
+            "endAt": (pendulum.now() - datetime.timedelta(days=3)).isoformat()
+        },
+    }
+    within_row = {
+        "record": "data",
+        "parameters": {
+            "endAt": (pendulum.now() - datetime.timedelta(hours=30)).isoformat()
+        },
+    }
+    after_row = {
+        "record": "data",
+        "parameters": {"endAt": pendulum.now().isoformat()},
+    }
+    assert not export_jobs_stream.post_process(before_row, None)
+    assert not export_jobs_stream.post_process(after_row, None)
+    assert export_jobs_stream.post_process(within_row, None)
+
+
 def test_filter_by_content_type():
     tap_gladly = Tapgladly(
         config=dict(
