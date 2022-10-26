@@ -1,12 +1,14 @@
 """Tests standard tap features using the built-in SDK tests library."""
 
 import datetime
+from unittest import mock
 
 import pendulum
 
 from tap_gladly.streams import (
     ExportCompletedJobsStream,
     ExportFileConversationItemsChatMessage,
+    ExportFileTopicsStream,
 )
 from tap_gladly.tap import Tapgladly
 
@@ -87,3 +89,44 @@ def test_filter_by_content_type():
 
     assert efcis.post_process(good_content_row, None)
     assert not efcis.post_process(bad_content_row, None)
+
+
+@mock.patch("tap_gladly.streams.gladlyStream.get_records")
+def test_max_job_lookback_get_records(mocked_super_get_records):
+    max_job_lookback = 5
+    tap_gladly = Tapgladly(
+        config=dict(
+            SAMPLE_CONFIG,
+            start_date=(pendulum.now() - datetime.timedelta(days=4)).isoformat(),
+            max_job_lookback=5,
+        ),
+        parse_env_config=False,
+    )
+
+    file_stream = ExportFileTopicsStream(tap_gladly)
+    mocked_super_get_records.return_value = ["records"]
+
+    valid_job_context = {
+        "job_id": "job_id",
+        "updatedAt": (
+            pendulum.now() - datetime.timedelta(days=max_job_lookback - 1)
+        ).isoformat(),
+    }
+
+    earliest_valid_job_context = {
+        "job_id": "job_id",
+        "updatedAt": (
+            pendulum.now() - datetime.timedelta(days=max_job_lookback)
+        ).isoformat(),
+    }
+
+    ignored_job_context = {
+        "job_id": "job_id_2",
+        "updatedAt": (
+            pendulum.now() - datetime.timedelta(days=max_job_lookback + 1)
+        ).isoformat(),
+    }
+
+    assert len(file_stream.get_records(valid_job_context)) > 0
+    assert len(file_stream.get_records(earliest_valid_job_context)) > 0
+    assert len(file_stream.get_records(ignored_job_context)) == 0
