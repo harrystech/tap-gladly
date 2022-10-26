@@ -31,14 +31,9 @@ def test_started_at():
     export_jobs_stream = ExportCompletedJobsStream(tap_gladly)
     before_row = {
         "record": "data",
-        "parameters": {
-            "endAt": (pendulum.now() - datetime.timedelta(days=3)).isoformat()
-        },
+        "updatedAt": (pendulum.now() - datetime.timedelta(days=3)).isoformat(),
     }
-    after_row = {
-        "record": "data",
-        "parameters": {"endAt": pendulum.now().isoformat()},
-    }
+    after_row = {"record": "data", "updatedAt": pendulum.now().isoformat()}
     assert not export_jobs_stream.post_process(before_row, None)
     assert export_jobs_stream.post_process(after_row, None)
 
@@ -55,19 +50,15 @@ def test_data_interval():
     export_jobs_stream = ExportCompletedJobsStream(tap_gladly)
     before_row = {
         "record": "data",
-        "parameters": {
-            "endAt": (pendulum.now() - datetime.timedelta(days=3)).isoformat()
-        },
+        "updatedAt": (pendulum.now() - datetime.timedelta(days=3)).isoformat(),
     }
     within_row = {
         "record": "data",
-        "parameters": {
-            "endAt": (pendulum.now() - datetime.timedelta(hours=30)).isoformat()
-        },
+        "updatedAt": (pendulum.now() - datetime.timedelta(hours=30)).isoformat(),
     }
     after_row = {
         "record": "data",
-        "parameters": {"endAt": pendulum.now().isoformat()},
+        "updatedAt": pendulum.now().isoformat(),
     }
     assert not export_jobs_stream.post_process(before_row, None)
     assert not export_jobs_stream.post_process(after_row, None)
