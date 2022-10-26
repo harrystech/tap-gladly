@@ -1,8 +1,9 @@
 """Stream type classes for tap-gladly."""
 import abc
+import csv
 import json
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Any, Iterable, Optional
 
 import pendulum
 import requests
@@ -191,3 +192,42 @@ class ExportFileConversationItemsWhatsapp(ExportFileConversationItemsStream):
 
     name = "conversation_whatsapp"
     content_type = "whatsapp"
+
+
+class ReportsConversationTimestampsReportStream(gladlyStream):
+    """gladly stream class for Conversation Timestamps Report."""
+
+    rest_method = "POST"
+
+    name = "reports__conversation_timestamps_report"
+    path = "/reports"
+    schema_filepath = SCHEMAS_DIR / "reports__conversation_timestamps_report.json"
+
+    def prepare_request_payload(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Optional[dict]:
+        """Prepare the data payload for the REST API request.
+
+        By default, no payload will be sent (return None).
+        """
+        payload: dict = {
+            "metricSet": "ConversationTimestampsReport",
+            "startAt": pendulum.parse(self.config["start_date"]).format(  # type: ignore
+                "YYYY-MM-DD"
+            ),
+            "endAt": (
+                pendulum.parse(self.config["end_date"])
+                if "end_date" in self.config
+                else pendulum.now()
+            ).format(  # type: ignore
+                "YYYY-MM-DD"
+            ),
+            "timezone": "UTC",
+        }
+
+        return payload
+
+    def parse_response(self, response: requests.Response) -> Iterable[dict]:
+        """Parse the response and return an iterator of result records."""
+        gen_decoded_response = (line.decode("utf-8") for line in response.iter_lines())
+        yield from csv.DictReader(gen_decoded_response)

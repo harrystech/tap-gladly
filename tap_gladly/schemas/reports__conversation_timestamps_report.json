@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "Timezone Filter": {
+      "type": "string"
+    },
+    "Timestamp": {
+      "type": "string"
+    },
+    "Event Type": {
+      "type": "string"
+    },
+    "Conversation ID": {
+      "type": "string"
+    },
+    "Customer ID": {
+      "type": "string"
+    },
+    "Initiator Type": {
+      "type": "string"
+    },
+    "Initiator ID": {
+      "type": "string"
+    },
+    "Initiator Agent Name": {
+      "type": "string"
+    },
+    "Assigned Inbox ID": {
+      "type": "string"
+    },
+    "Assigned Inbox Name": {
+      "type": "string"
+    },
+    "Assigned Agent ID": {
+      "type": "string"
+    },
+    "Assigned Agent Name": {
+      "type": "string"
+    },
+    "Topic ID": {
+      "type": "string"
+    },
+    "Topic Name": {
+      "type": "string"
+    },
+    "Newly Assigned Inbox ID": {
+      "type": "string"
+    },
+    "Newly Assigned Inbox Name": {
+      "type": "string"
+    },
+    "Newly Assigned Agent ID": {
+      "type": "string"
+    },
+    "Newly Assigned Agent Name": {
+      "type": "string"
+    },
+    "Assignment Update Reason": {
+      "type": "string"
+    },
+    "Merged Customer ID": {
+      "type": "string"
+    },
+    "Merged Conversation ID": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "Assigned Agent ID",
+    "Assigned Agent Name",
+    "Assigned Inbox ID",
+    "Assigned Inbox Name",
+    "Assignment Update Reason",
+    "Conversation ID",
+    "Customer ID",
+    "Event Type",
+    "Initiator Agent Name",
+    "Initiator ID",
+    "Initiator Type",
+    "Merged Conversation ID",
+    "Merged Customer ID",
+    "Newly Assigned Agent ID",
+    "Newly Assigned Agent Name",
+    "Newly Assigned Inbox ID",
+    "Newly Assigned Inbox Name",
+    "Timestamp",
+    "Timezone Filter",
+    "Topic ID",
+    "Topic Name"
+  ]
+}
