@@ -84,6 +84,7 @@ class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
             "twitter": "export_conversation-twitter.json",
             "instagram_direct": "export_conversation-instagram_direct.json",
             "whatsapp": "export_conversation-whatsapp.json",
+            "email": "export_conversation-email.json",
         }
 
         try:
@@ -192,6 +193,13 @@ class ExportFileConversationItemsWhatsapp(ExportFileConversationItemsStream):
 
     name = "conversation_whatsapp"
     content_type = "whatsapp"
+
+
+class ExportFileConversationItemsEmail(ExportFileConversationItemsStream):
+    """Export conversation items stream where content type is voicemail."""
+
+    name = "conversation_email"
+    content_type = "email"
 
 
 class ReportsConversationTimestampsReportStream(gladlyStream):
