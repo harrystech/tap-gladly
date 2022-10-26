@@ -11,9 +11,6 @@
     "content": {
       "type": "object",
       "properties": {
-        "content": {
-          "type": "string"
-        },
         "type": {
           "type": "string"
         },
@@ -64,11 +61,18 @@
         "id": {
           "type": "string"
         }
-      },
-      "required": [
-        "id",
-        "type"
-      ]
+      }
+    },
+    "responder": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
     },
     "timestamp": {
       "type": "string"
