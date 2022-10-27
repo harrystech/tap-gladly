@@ -51,7 +51,9 @@ class ExportFile(gladlyStream, abc.ABC):
             return []
         period = pendulum.now().diff(pendulum.parse(context["updatedAt"])).in_days()
         if "max_job_lookback" in self.config:
+            logging.info(f"Max job lookback is set to {self.config['max_job_lookback']}")
             if period <= self.config["max_job_lookback"]:
+                logging.info(f"{period} <= {self.config['max_job_lookback']}, syncing ...")
                 return super().get_records(context)
             else:
                 logging.warning(
