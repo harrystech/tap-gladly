@@ -2,8 +2,9 @@
 import abc
 import csv
 import json
+import logging
 from pathlib import Path
-from typing import Any, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional
 
 import pendulum
 import requests
@@ -27,7 +28,7 @@ class ExportCompletedJobsStream(gladlyStream):
 
     def post_process(self, row, context):
         """Filter jobs that finished before start_date."""
-        job_completion_date = pendulum.parse(row["parameters"]["endAt"])
+        job_completion_date = pendulum.parse(row["updatedAt"])
         if pendulum.parse(self.config["start_date"]) <= job_completion_date:
             if "end_date" in self.config:
                 if pendulum.parse(self.config["end_date"]) >= job_completion_date:
@@ -38,11 +39,32 @@ class ExportCompletedJobsStream(gladlyStream):
 
     def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
         """Return a context dictionary for child streams."""
-        return {"job_id": record["id"]}
+        return {"job_id": record["id"], "updatedAt": record["updatedAt"]}
 
 
-class ExportFileTopicsStream(gladlyStream):
-    """Abstract class, export conversation items stream."""
+class ExportFile(gladlyStream, abc.ABC):
+    """Abstract class for Job File export stream."""
+
+    def get_records(self, context: Optional[Dict[Any, Any]]):
+        """Get records that exists, ignoring older jobs if max_job_lookback is setup."""
+        if not context:
+            return []
+        period = pendulum.now().diff(pendulum.parse(context["updatedAt"])).in_days()
+        if "max_job_lookback" in self.config:
+            if period <= self.config["max_job_lookback"]:
+                return super().get_records(context)
+            else:
+                logging.warning(
+                    f"Job id {context['job_id']} ignored because it was "
+                    f"{period} > {self.config['max_job_lookback']} days ago"
+                )
+                return []
+        else:
+            return super().get_records(context)
+
+
+class ExportFileTopicsStream(ExportFile):
+    """Topic export conversation items stream."""
 
     name = "topics"
     path = "/export/jobs/{job_id}/files/topics.jsonl"
@@ -77,7 +99,7 @@ class ExportFileConversationItemsAllTypesStream(gladlyStream):
             yield from extract_jsonpath(self.records_jsonpath, input=record)
 
 
-class ExportFileConversationItemsStream(gladlyStream, abc.ABC):
+class ExportFileConversationItemsStream(ExportFile, abc.ABC):
     """Abstract class, export conversation items stream."""
 
     name = "conversation_conversation_items"
