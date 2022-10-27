@@ -48,12 +48,17 @@ class ExportFile(gladlyStream, abc.ABC):
     def get_records(self, context: Optional[Dict[Any, Any]]):
         """Get records that exists, ignoring older jobs if max_job_lookback is setup."""
         if not context:
+            logging.warning("Context is empty, nothing to do")
             return []
         period = pendulum.now().diff(pendulum.parse(context["updatedAt"])).in_days()
         if "max_job_lookback" in self.config:
-            logging.info(f"Max job lookback is set to {self.config['max_job_lookback']}")
+            logging.info(
+                f"Max job lookback is set to {self.config['max_job_lookback']}"
+            )
             if period <= self.config["max_job_lookback"]:
-                logging.info(f"{period} <= {self.config['max_job_lookback']}, syncing ...")
+                logging.info(
+                    f"{period} <= {self.config['max_job_lookback']}, syncing ..."
+                )
                 return super().get_records(context)
             else:
                 logging.warning(
@@ -82,7 +87,7 @@ class ExportFileTopicsStream(ExportFile):
             yield from extract_jsonpath(self.records_jsonpath, input=json.loads(line))
 
 
-class ExportFileConversationItemsAllTypesStream(gladlyStream):
+class ExportFileConversationItemsAllTypesStream(ExportFile):
     """Stream with all the conversations and content type."""
 
     name = "conversation_all_types"
