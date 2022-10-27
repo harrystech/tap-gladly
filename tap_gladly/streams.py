@@ -80,6 +80,25 @@ class ExportFileTopicsStream(ExportFile):
             yield from extract_jsonpath(self.records_jsonpath, input=json.loads(line))
 
 
+class ExportFileConversationItemsAllTypesStream(gladlyStream):
+    """Stream with all the conversations and content type."""
+
+    name = "conversation_all_types"
+    path = "/export/jobs/{job_id}/files/conversation_items.jsonl"
+    primary_keys = ["id"]
+    replication_key = None
+    parent_stream_type = ExportCompletedJobsStream
+    ignore_parent_replication_key = True
+    schema_filepath = SCHEMAS_DIR / "export_conversation-all_types.json"
+
+    def parse_response(self, response: requests.Response) -> Iterable[dict]:
+        """Parse the response and return an iterator of result records."""
+        for line in response.iter_lines():
+            record = json.loads(line)
+            record["content"] = {"type": record["content"]["type"]}
+            yield from extract_jsonpath(self.records_jsonpath, input=record)
+
+
 class ExportFileConversationItemsStream(ExportFile, abc.ABC):
     """Abstract class, export conversation items stream."""
 
@@ -106,6 +125,7 @@ class ExportFileConversationItemsStream(ExportFile, abc.ABC):
             "twitter": "export_conversation-twitter.json",
             "instagram_direct": "export_conversation-instagram_direct.json",
             "whatsapp": "export_conversation-whatsapp.json",
+            "email": "export_conversation-email.json",
         }
 
         try:
@@ -214,6 +234,13 @@ class ExportFileConversationItemsWhatsapp(ExportFileConversationItemsStream):
 
     name = "conversation_whatsapp"
     content_type = "whatsapp"
+
+
+class ExportFileConversationItemsEmail(ExportFileConversationItemsStream):
+    """Export conversation items stream where content type is voicemail."""
+
+    name = "conversation_email"
+    content_type = "email"
 
 
 class ReportsConversationTimestampsReportStream(gladlyStream):

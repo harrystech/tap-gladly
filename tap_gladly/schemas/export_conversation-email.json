@@ -11,15 +11,41 @@
     "content": {
       "type": "object",
       "properties": {
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "from": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
         "content": {
           "type": "string"
         },
         "type": {
           "type": "string"
+        },
+        "cc": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "bcc": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [
         "content",
+        "from",
+        "to",
         "type"
       ]
     },
@@ -36,7 +62,7 @@
           "type": "string"
         }
       }
-    },
+      },
     "responder": {
       "type": "object",
       "properties": {

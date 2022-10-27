@@ -8,10 +8,12 @@ from singer_sdk import typing as th  # JSON schema typing helpers
 # TODO: Import your custom stream types here:
 from tap_gladly.streams import (
     ExportCompletedJobsStream,
+    ExportFileConversationItemsAllTypesStream,
     ExportFileConversationItemsChatMessage,
     ExportFileConversationItemsConversationNote,
     ExportFileConversationItemsConversationStatusChange,
     ExportFileConversationItemsCustomerActivity,
+    ExportFileConversationItemsEmail,
     ExportFileConversationItemsFacebookMessage,
     ExportFileConversationItemsInstagramDirect,
     ExportFileConversationItemsPhoneCall,
@@ -39,7 +41,9 @@ STREAM_TYPES = [
     ExportFileConversationItemsTwitter,
     ExportFileConversationItemsInstagramDirect,
     ExportFileConversationItemsWhatsapp,
+    ExportFileConversationItemsEmail,
     ReportsConversationTimestampsReportStream,
+    ExportFileConversationItemsAllTypesStream,
 ]
 
 
