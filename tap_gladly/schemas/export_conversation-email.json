@@ -46,8 +46,7 @@
         "content",
         "from",
         "to",
-        "type",
-        "subject"
+        "type"
       ]
     },
     "customerId": {
