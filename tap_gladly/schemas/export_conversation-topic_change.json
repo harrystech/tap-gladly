@@ -45,6 +45,17 @@
         }
       }
     },
+    "responder": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "timestamp": {
       "type": "string"
     }
