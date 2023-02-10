@@ -7,7 +7,7 @@ keywords = [
     "ELT",
     "gladly",
 ]
-license = "Apache 2.0"
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "<3.11,>=3.7.1"
