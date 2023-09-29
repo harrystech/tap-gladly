@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tap-gladly"
-version = "0.4.1"
+version = "0.4.2"
 description = "`tap-gladly` is a Singer tap for gladly, built with the Meltano SDK for Singer Taps."
 authors = ["harrystech"]
 keywords = [

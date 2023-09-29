@@ -70,10 +70,44 @@ class ExportFile(gladlyStream, abc.ABC):
             return super().get_records(context)
 
 
+class ExportFileAgentsStream(ExportFile):
+    """Agent export stream."""
+
+    name = "agents"
+    path = "/export/jobs/{job_id}/files/agents.jsonl"
+    primary_keys = ["id"]
+    replication_key = None
+    parent_stream_type = ExportCompletedJobsStream
+    ignore_parent_replication_key = True
+    schema_filepath = SCHEMAS_DIR / "export_agents.json"
+
+    def parse_response(self, response: requests.Response) -> Iterable[dict]:
+        """Parse the response and return an iterator of result records."""
+        for line in response.iter_lines():
+            yield from extract_jsonpath(self.records_jsonpath, input=json.loads(line))
+
+
+class ExportFileCustomersStream(ExportFile):
+    """Customer export stream."""
+
+    name = "customers"
+    path = "/export/jobs/{job_id}/files/customers.jsonl"
+    primary_keys = ["id"]
+    replication_key = None
+    parent_stream_type = ExportCompletedJobsStream
+    ignore_parent_replication_key = True
+    schema_filepath = SCHEMAS_DIR / "export_customers.json"
+
+    def parse_response(self, response: requests.Response) -> Iterable[dict]:
+        """Parse the response and return an iterator of result records."""
+        for line in response.iter_lines():
+            yield from extract_jsonpath(self.records_jsonpath, input=json.loads(line))
+
+
 class ExportFileTopicsStream(ExportFile):
     """Topic export conversation items stream."""
 
-    name = "topics"
+    name = "agents"
     path = "/export/jobs/{job_id}/files/topics.jsonl"
     primary_keys = ["id"]
     replication_key = None

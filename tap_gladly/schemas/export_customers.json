@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "emailAddresses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "phoneNumbers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "externalCustomerId": {
+      "type": "string"
+    }
+  }
+}
